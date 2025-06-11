@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gemini Chatbot</title>
+    <style>
+        body { background-color: #1a1a2e; color: white; font-family: Arial; padding: 20px; }
+        #chatbox { width: 100%; max-width: 600px; margin: auto; }
+        .msg { margin: 10px 0; }
+        .user { color: #00f5d4; }
+        .bot { color: #00b4d8; }
+    </style>
+</head>
+<body>
+    <div id="chatbox">
+        <h2>🤖 Gemini Chatbot</h2>
+        <div id="chat"></div>
+        <input type="text" id="user_input" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendMessage()" />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const inputBox = document.getElementById("user_input");
+            const message = inputBox.value;
+            if (!message.trim()) return;
+
+            const chatDiv = document.getElementById("chat");
+            chatDiv.innerHTML += `<div class="msg user"><b>You:</b> ${message}</div>`;
+            inputBox.value = "";
+
+            const response = await fetch("/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message })
+            });
+
+            const data = await response.json();
+            chatDiv.innerHTML += `<div class="msg bot"><b>Gemini:</b> ${data.response}</div>`;
+        }
+    </script>
+</body>
+</html>
